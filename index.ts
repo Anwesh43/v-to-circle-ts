@@ -7,6 +7,7 @@ const foreColor : string = "#311B92"
 const backColor : string = "#BDBDBD"
 const nodes : number = 5
 const lines : number = 2
+const rFactor : number = 3
 
 class ScaleUtil {
 
@@ -20,6 +21,52 @@ class ScaleUtil {
 
     static sinify(scale : number) : number {
         return Math.sin(scale * Math.PI)
+    }
+}
+
+class DrawingUtil {
+
+    static drawLine(context : CanvasRenderingContext2D, x1 : number, y1 : number, x2 : number, y2 : number) {
+        context.beginPath()
+        context.moveTo(x1, y1)
+        context.lineTo(x2, y2)
+        context.stroke()
+    }
+
+    static drawCircle(context : CanvasRenderingContext2D, x : number, y : number, r : number) {
+        context.save()
+        context.beginPath()
+        context.arc(x, y, r, 0, 2 * Math.PI)
+        context.fill()
+        context.restore()
+    }
+    static drawVLine(context : CanvasRenderingContext2D, i : number, size : number, scale : number) {
+        const sci : number = ScaleUtil.sinify(scale)
+        const sf : number = ScaleUtil.divideScale(sci, i, lines)
+        context.save()
+        DrawingUtil.drawLine(context, 0, 0, size * sf * (1 - 2 * i), -size * sf)
+        context.restore()
+    }
+
+    static drawVLineToCircle(context : CanvasRenderingContext2D, size : number, scale : number) {
+        for (var i = 0; i < lines; i++) {
+            DrawingUtil.drawVLine(context, i, size, scale)
+        }
+        const r : number = size / rFactor
+        DrawingUtil.drawCircle(context, 0, 0, (size / rFactor) * scale)
+    }
+
+    static drawVTCNode(context : CanvasRenderingContext2D, i : number, scale : number) {
+        const gap : number = w / (nodes + 1)
+        const size : number = gap / sizeFactor
+        context.fillStyle = foreColor
+        context.strokeStyle = foreColor
+        context.lineWidth = Math.min(w, h) / strokeFactor
+        context.lineCap = 'round'
+        context.save()
+        context.translate(gap * (i + 1), h / 2)
+        DrawingUtil.drawVLineToCircle(context, size, scale)
+        context.restore()
     }
 }
 
