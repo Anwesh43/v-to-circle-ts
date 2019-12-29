@@ -190,3 +190,27 @@ class VTCNode {
         return this
     }
 }
+
+class VToCircle {
+
+    root : VTCNode = new VTCNode(0)
+    curr : VTCNode = this.root
+    dir : number = 1
+
+    draw(context : CanvasRenderingContext2D) {
+        this.root.draw(context)
+    }
+
+    update(cb : Function) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            cb()
+        })
+    }
+
+    startUpdating(cb : Function) {
+        this.curr.startUpdating(cb)
+    }
+}
