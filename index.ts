@@ -214,3 +214,25 @@ class VToCircle {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+
+    vtc : VToCircle = new VToCircle()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.vtc.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.vtc.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.vtc.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
